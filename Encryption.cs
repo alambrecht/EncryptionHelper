@@ -11,28 +11,55 @@ namespace Encryption
     {
         private static readonly byte[] Salt = (ConfigurationManager.AppSettings["Salt"] == null ? "ADB928C878FC4D54844926688EBBE1C0".CreateMd5Hash() : ConfigurationManager.AppSettings["Salt"].CreateMd5Hash());
 
+        /// <summary>
+        /// Create a hashed password salted with a user unique identifier
+        /// </summary>
+        /// <param name="password">Clear text password to hash</param>
+        /// <param name="userUniqueIdentifier">User unique identifier</param>
+        /// <returns>Bytes of hashed password</returns>
         public static byte[] CreateMd5PasswordHash(this string password, string userUniqueIdentifier)
         {
             using (var md5Hash = MD5.Create())
                 return md5Hash.ComputeHash(Encoding.UTF8.GetBytes(userUniqueIdentifier + password));
         }
 
+        /// <summary>
+        /// Create an MD5 hash of a password
+        /// </summary>
+        /// <param name="password">Clear text password to hash</param>
+        /// <returns>Bytes of hashed password</returns>
         public static byte[] CreateMd5Hash(this string password)
         {
             using (var md5Hash = MD5.Create())
                 return md5Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
         }
 
+        /// <summary>
+        /// Encrypt data for a URL
+        /// </summary>
+        /// <param name="id">URL data to encrypt</param>
+        /// <returns>Encrypted string of URL data</returns>
         public static string EncryptUrl(this string id)
         {
             return HttpUtility.UrlEncode(Encrypt(id, "URLEncrypt"));
         }
 
+        /// <summary>
+        /// Decrypt data for a URL
+        /// </summary>
+        /// <param name="id">URL data to decrypt</param>
+        /// <returns>Decrypted string of URL data</returns>
         public static string DecryptUrl(this string id)
         {
             return HttpUtility.UrlDecode(Decrypt(id, "URLEncrypt"));
         }
 
+        /// <summary>
+        /// Encrypt string data with a password
+        /// </summary>
+        /// <param name="clearText">Data to encrypt</param>
+        /// <param name="password">Password to encrypt with</param>
+        /// <returns>Encrypted string</returns>
         public static string Encrypt(this string clearText, string password)
         {
             var bytes = Encoding.Unicode.GetBytes(clearText);
@@ -41,6 +68,12 @@ namespace Encryption
                 Convert.ToBase64String(Encrypt(bytes, rfc2898DeriveBytes.GetBytes(32), rfc2898DeriveBytes.GetBytes(32)));
         }
 
+        /// <summary>
+        /// Decrypt string data with a password
+        /// </summary>
+        /// <param name="cipherText">Encrypted string data</param>
+        /// <param name="password">Password to decrypt with</param>
+        /// <returns>Decrypted string</returns>
         public static string Decrypt(this string cipherText, string password)
         {
             var cipherData = Convert.FromBase64String(cipherText);
