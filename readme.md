@@ -5,7 +5,7 @@ A group of methods to assist with encryption
 Add the folowing line to the App.config or web.config app settings for the salt
 
 ```
-&lt;add key=&quot;Salt&quot; value=&quot;SALT VALUE HERE&quot; /&gt;
+<add key="Salt" value="SALT VALUE HERE" />
 ```
 
 Usage:
